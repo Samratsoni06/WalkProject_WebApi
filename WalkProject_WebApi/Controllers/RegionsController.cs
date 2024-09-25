@@ -1,8 +1,5 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using WalkProject_WebApi.CustomActionFilter;
 using WalkProject_WebApi.Data;
 using WalkProject_WebApi.Models.Domain;
@@ -29,16 +26,12 @@ namespace WalkProject_WebApi.Controllers
             this.logger = logger;
         }
 
-
-
-
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
 
             try
             {
-                // throw new Exception("This is errer");
                 var reginsDomain = await regionRepository.GetAllAsync();
                 return Ok(mapper.Map<List<RegionDTO>>(reginsDomain));
             }
@@ -47,19 +40,6 @@ namespace WalkProject_WebApi.Controllers
                 logger.LogError(ex, ex.Message);
                 throw;
             }
-
-            //var regionDto = new List<RegionDTO>();
-            //foreach (var reg in reginsDomain)
-            //{
-            //    regionDto.Add(new RegionDTO() { 
-            //        Id = reg.Id,
-            //        Name = reg.Name,
-            //        Code = reg.Code,
-            //        RegionalImageUrl = reg.RegionalImageUrl
-
-            //    });
-            //}
-            //return Ok(regionDto);
 
         }
 
@@ -76,93 +56,38 @@ namespace WalkProject_WebApi.Controllers
                 }
                 return Ok(mapper.Map<RegionDTO>(region));
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 logger.LogError(ex, ex.Message);
                 throw;
             }
 
-            //var regionDto = new RegionDTO()
-            //{
-            //    Id = region.Id,
-            //    Name = region.Name,
-            //    Code = region.Code,
-            //    RegionalImageUrl = region.RegionalImageUrl               
-            //};
-            //return Ok(regionDto);
         }
 
         [HttpPost]
         [ValidationModel]
         public async Task<IActionResult> Create([FromBody] AddRegionRequestDto Dto)
         {
-            //Convert DTo to Model
-            //if (ModelState.IsValid)
-            //{
-                var regionDmainModel = mapper.Map<Region>(Dto);
+            var regionDmainModel = mapper.Map<Region>(Dto);
 
-                //var regionDmainModel = new Region
-                //{
-                //    Code = Dto.Code,
-                //    Name = Dto.Name,
-                //    RegionalImageUrl = Dto.RegionalImageUrl
-                //};
-                // Domaim Model Call to create Design
+            regionDmainModel = await regionRepository.CreateAsync(regionDmainModel);
 
-                regionDmainModel = await regionRepository.CreateAsync(regionDmainModel);
+            var regionDto = mapper.Map<Region>(Dto);
 
-                var regionDto = mapper.Map<Region>(Dto);
-
-                // Back to DTO
-                //var regionDto = new RegionDTO()
-                //{
-                //    Name = Dto.Name,
-                //    Code = Dto.Code,
-                //    RegionalImageUrl = Dto.RegionalImageUrl
-                //};
-
-                return CreatedAtAction(nameof(GetById), new { id = regionDmainModel.Id }, regionDmainModel);
-            //}
-            //else
-            //{   
-            //    return BadRequest(ModelState);
-            //}
+            return CreatedAtAction(nameof(GetById), new { id = regionDmainModel.Id }, regionDmainModel);            
         }
 
         [HttpPut]
         [Route("{id:Guid}")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDto updateRegionRequestDto)
         {
-            //if (ModelState.IsValid)
-            //{
-                var reginsDomainModel = mapper.Map<Region>(updateRegionRequestDto);
-                //var reginsDomainModel = new Region
-                //{
-                //    Name = updateRegionRequestDto.Name,
-                //    Code = updateRegionRequestDto.Code,
-                //    RegionalImageUrl = updateRegionRequestDto.RegionalImageUrl
-                //};
-                reginsDomainModel = await regionRepository.UpdateAsync(reginsDomainModel, id);
-                if (reginsDomainModel == null)
-                {
-                    return NotFound();
-                }
-                return Ok(mapper.Map<RegionDTO>(reginsDomainModel));
-
-                // Convert Domain Mode to DTO
-                //var regionDto = new RegionDTO()
-                //{
-                //    Id = reginsDomainModel.Id,
-                //    Name = reginsDomainModel.Name,
-                //    Code = reginsDomainModel.Code,
-                //    RegionalImageUrl = reginsDomainModel.RegionalImageUrl
-                //};
-            //}
-            //else
-            //{
-            //    return BadRequest(ModelState);
-            //}
-
+            var reginsDomainModel = mapper.Map<Region>(updateRegionRequestDto);          
+            reginsDomainModel = await regionRepository.UpdateAsync(reginsDomainModel, id);
+            if (reginsDomainModel == null)
+            {
+                return NotFound();
+            }
+            return Ok(mapper.Map<RegionDTO>(reginsDomainModel));
         }
 
         [HttpDelete]
@@ -175,14 +100,6 @@ namespace WalkProject_WebApi.Controllers
                 return NotFound();
             }
             return Ok(mapper.Map<RegionDTO>(reginsDomain));
-
-            //var regDTO = new RegionDTO()
-            //{
-            //    Id = reginsDomain.Id,
-            //    Name = reginsDomain.Name,
-            //    Code = reginsDomain.Code,
-            //    RegionalImageUrl = reginsDomain.RegionalImageUrl
-            //};
         }
     }
 }

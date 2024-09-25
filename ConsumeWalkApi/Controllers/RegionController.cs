@@ -28,9 +28,6 @@ namespace ConsumeWalkApi.Controllers
 
             response.AddRange(await httpResponseMessage.Content.ReadFromJsonAsync<IEnumerable<RegoinDTO>>());
 
-            //var stringResponseBody = await httpResponseMessage.Content.ReadAsStringAsync();
-            //ViewBag.Response = stringResponseBody;
-
             return View(response);
         }
 

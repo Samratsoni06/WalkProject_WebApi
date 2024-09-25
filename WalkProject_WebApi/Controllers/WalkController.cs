@@ -33,7 +33,6 @@ namespace WalkProject_WebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] string? filteron = null, [FromQuery] string? filterquery = null, [FromQuery] string? SortBy = null, [FromQuery] bool? isAcending = true, [FromQuery] int PageNumber = 1, [FromQuery] int PageSize = 1000)
         {
-            //var walkDom = await _walkRepository.GetWalkAsync();
             var walkDom = await _walkRepository.GetWalkAsync(filteron,filterquery, SortBy, isAcending ?? true,PageNumber,PageSize);
             return Ok(_mapper.Map<List<WalkDTO>>(walkDom));
         }
