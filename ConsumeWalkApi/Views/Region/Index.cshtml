@@ -1,0 +1,45 @@
+﻿@model IEnumerable<ConsumeWalkApi.Models.RegoinDTO>
+
+<h1> Region </h1>
+<hr />
+
+@* 
+@if (ViewBag.Response is not null)
+{
+    <p>@ViewBag.Response</p>
+}
+ *@
+
+ <p>
+     <a asp-controller="Region" asp-action="Create">Add Region</a>
+ </p>
+ 
+ <div>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+               @*  <th>ID</th> *@
+                <th>Region Name</th>
+                <th>Code</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var item in Model)
+            {
+                <tr>
+                    @* <td>@item.Id</td> *@
+                    <td>@item.Name</td>
+                    <td>@item.Code</td>
+                    <td>
+                        <a class="btn btn-warning" asp-controller="Region" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                        @* <form method="post">
+                            <a class="btn btn-danger" asp-controller="Region" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        </form> *@
+                        
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+ </div>
